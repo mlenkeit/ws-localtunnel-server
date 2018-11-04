@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+const server = require('../server')
+const uuidv4 = require('uuid/v4')
+
+const argv = require('yargs')
+  .usage('Usage: $0 --port [num] <options>')
+  .env(true)
+  .option('t', {
+    alias: 'api-token',
+    describe: 'API token of the host (generated if not provided)'
+  })
+  .option('p', {
+    alias: 'port',
+    describe: 'Internal http server port',
+    demandOption: true,
+    number: true,
+    default: process.env.PORT
+  })
+  .help('help', 'Show this help and exit')
+  .version(require('../package').version)
+  .argv
+
+const opts = {
+  api_token: argv['api-token'] || uuidv4()
+}
+
+const instance = server(opts)
+  .listen(argv.port, () => {
+    console.log(`App listening on port ${argv.port}`)
+  })
+
+process.on('SIGINT', () => {
+  instance.close(() => {
+    process.exit()
+  })
+})
+
+process.on('SIGTERM', () => {
+  instance.close(() => {
+    process.exit()
+  })
+})
+
+// vim: ft=javascript
