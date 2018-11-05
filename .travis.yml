@@ -1,8 +1,13 @@
 language: node_js
 node_js:
-  - "9"
+- '9'
 script:
-  - npm run lint
+- npm run lint
 cache:
   directories:
-    - node_modules
+  - node_modules
+deploy:
+  provider: heroku
+  app: ml-localtunnel-server
+  api_key:
+    secure: FgMToL2o6P0EZMlvWJF5xuS3dDdGg7nnrkFnyZJPpfgOq/QCN1ymszwdwXg1NMoItD8mXJev8ArgO6XaI/nPmZt2zI6cGvLQW4BD2rOGwetKcwlzXaJt4rsL+ouAgpFYqELmHppuXmIPVkKSjul2foeHW0sE2sT6MCLfd8yzrORfeVoHDJWcpXQTFzInSZdBy1XpZuJ9+UU7YuDuQMSeQ6hIMwJNZGKibyQEWbqnWjbqL1zOEh2S0DHPaMx+oWzxBnGt9G1/hzMDKYjym2LAkzHvcGWZlFfhTUZIAITV425kKAkM0tCi5SQc9n2hCEGxD22BYo/wpKvsV3NFNVHKpM8sM2IOTydsWTewD1cRmXhkshNWd6pcjBHPd5Cw0ASxwSZrv1/taFd0QzMktn3AYPsHUmxPlBwuGUm0kPHzs7N9IAehDDabPApEpxNJFfNF/eYLPniWUzY1hWXmYjaqKWU2wCCkf2NyQzCFNrtTPMDGr2PY/KYgY3ytp2DTCPsOYa6WWLFgdRUuYu+cMbCT6jyhS38r/5/5PZg+MDLQkWc+aXRJO96YfTK8M+3jUuffhSVlqDEJxI/5PWNoaPukzsJk+7j0a1x0Aw9G1OX1tc3cZsKf9TrzP3r9O8Gq4heRzeUC1EZKLlohhRqkyZc0q2nAHGecG3AcrBIKKFIqxAE=
