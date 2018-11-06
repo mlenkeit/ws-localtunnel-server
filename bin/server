@@ -8,6 +8,7 @@ const argv = require('yargs')
   .option('t', {
     alias: 'api-token',
     describe: 'API token of the host (generated if not provided)',
+    string: true,
     default: process.env.API_TOKEN
   })
   .option('p', {
