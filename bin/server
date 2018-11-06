@@ -18,12 +18,18 @@ const argv = require('yargs')
     number: true,
     default: process.env.PORT
   })
+  .option('basic-auth', {
+    describe: 'Basic auth token (user:pass; generated if not provided)',
+    string: true,
+    default: process.env.BASIC_AUTH
+  })
   .help('help', 'Show this help and exit')
   .version(require('../package').version)
   .argv
 
 const opts = {
-  api_token: argv['api-token'] || uuidv4()
+  api_token: argv['api-token'] || uuidv4(),
+  basic_auth: argv['basic-auth'] || `user:${uuidv4()}`
 }
 
 const instance = server(opts)

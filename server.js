@@ -1,6 +1,7 @@
 'use strict'
 
 const assert = require('assert')
+const basicAuth = require('express-basic-auth')
 const express = require('express')
 const expressWs = require('express-ws')
 const uuidv4 = require('uuid/v4')
@@ -9,6 +10,7 @@ const API_TOKEN_EXPRESSION = /^token (.*)$/
 
 module.exports = function (opts) {
   assert(opts.api_token, 'API token option is required')
+  assert(opts.basic_auth, 'Basic auth option is required')
 
   const connections = {}
   const isValidRealm = (realm) => Object.keys(connections).indexOf(realm) > -1
@@ -17,7 +19,15 @@ module.exports = function (opts) {
   const app = express()
   expressWs(app)
 
+  const basicAuthChunks = opts.basic_auth.split(':')
+  const checkBasicAuth = basicAuth({
+    users: {
+      [basicAuthChunks[0]]: basicAuthChunks[1]
+    }
+  })
+
   console.log(`Current API token is ${opts.api_token}`)
+  console.log(`Current basic auth credential is ${opts.basic_auth}`)
 
   // status
   app.get('/', (req, res) => {
@@ -31,8 +41,8 @@ module.exports = function (opts) {
     const token = tokenMatches ? tokenMatches[1] : null
 
     if (token !== opts.api_token) {
-      console.log(`Rejecting request for ${req.url} due to invalid API token`)
-      return res.status(403).send()
+      console.log(`Request for ${req.url} does not contain a valid API token, checking for basic auth`)
+      return checkBasicAuth(req, res, next)
     }
     next()
   })
