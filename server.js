@@ -4,9 +4,8 @@ const assert = require('assert')
 const basicAuth = require('express-basic-auth')
 const express = require('express')
 const expressWs = require('express-ws')
+const tokenAuth = require('express-api-token-auth')
 const uuidv4 = require('uuid/v4')
-
-const API_TOKEN_EXPRESSION = /^token (.*)$/
 
 module.exports = function (opts) {
   assert(opts.api_token, 'API token option is required')
@@ -25,6 +24,10 @@ module.exports = function (opts) {
       [basicAuthChunks[0]]: basicAuthChunks[1]
     }
   })
+  const checkAuth = tokenAuth({
+    token: opts.api_token,
+    onError: (req, res, next, params) => checkBasicAuth(req, res, next)
+  })
 
   console.log(`Current API token is ${opts.api_token}`)
   console.log(`Current basic auth credential is ${opts.basic_auth}`)
@@ -35,15 +38,10 @@ module.exports = function (opts) {
   })
 
   // check for api token
-  app.use((req, res, next) => {
-    const authorization = req.get('Authorization') || ''
-    const tokenMatches = API_TOKEN_EXPRESSION.exec(authorization)
-    const token = tokenMatches ? tokenMatches[1] : null
+  app.use(require('body-parser').json(), checkAuth)
 
-    if (token !== opts.api_token) {
-      console.log(`Request for ${req.url} does not contain a valid API token, checking for basic auth`)
-      return checkBasicAuth(req, res, next)
-    }
+  app.use((req, res, next) => {
+    console.log('Authenticated')
     next()
   })
 
