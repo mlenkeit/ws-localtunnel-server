@@ -2,6 +2,7 @@
 
 const assert = require('assert')
 const basicAuth = require('express-basic-auth')
+const bodyParser = require('body-parser')
 const express = require('express')
 const expressWs = require('express-ws')
 const tokenAuth = require('express-api-token-auth')
@@ -38,12 +39,8 @@ module.exports = function (opts) {
   })
 
   // check for api token
-  app.use(require('body-parser').json(), checkAuth)
-
-  app.use((req, res, next) => {
-    console.log('Authenticated')
-    next()
-  })
+  app.use(checkAuth)
+  app.use(bodyParser.json())
 
   app.use('/to/:realm', (req, res) => {
     const realm = req.params.realm
@@ -65,7 +62,8 @@ module.exports = function (opts) {
       uuid: uuid,
       url: req.url,
       headers: req.headers,
-      method: req.method
+      method: req.method,
+      body: req.body
     }
     packets[uuid] = {
       reqMetadata: reqMetadata,
