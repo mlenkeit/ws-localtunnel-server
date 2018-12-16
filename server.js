@@ -23,7 +23,9 @@ module.exports = function (opts) {
   const checkBasicAuth = basicAuth({
     users: {
       [basicAuthChunks[0]]: basicAuthChunks[1]
-    }
+    },
+    challenge: true,
+    realm: 'ws-localtunnel'
   })
   const checkAuth = tokenAuth({
     token: opts.api_token,
