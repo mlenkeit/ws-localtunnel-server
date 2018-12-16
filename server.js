@@ -91,7 +91,9 @@ module.exports = function (opts) {
         const uuid = resMetadata.uuid
         const packet = packets[uuid]
         if (packet) {
-          packet.res.status(resMetadata.statusCode).set(resMetadata.headers).send(resMetadata.body)
+          // TODO: remove workaround, rewrite should be done in client
+          const body = resMetadata.bodybody.replace(new RegExp(`/${realm}`, 'g'), `/to/${realm}`)
+          packet.res.status(resMetadata.statusCode).set(resMetadata.headers).send(body)
           delete packets[uuid]
         } else {
           console.log(`Ignoring message ${msg}`)
